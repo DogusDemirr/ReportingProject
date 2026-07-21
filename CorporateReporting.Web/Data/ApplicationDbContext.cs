@@ -22,7 +22,18 @@ namespace CorporateReporting.Web.Data
         /// Departments DbSet for managing departments in the database.
         /// </summary>
         public DbSet<Department> Departments => Set<Department>();
-
+        /// <summary>
+        /// ReportableTables
+        /// </summary>
+        public DbSet<ReportableTable> ReportableTables => Set<ReportableTable>();
+        /// <summary>
+        /// ReportableColumns
+        /// </summary>
+        public DbSet<ReportableColumn> ReportableColumns => Set<ReportableColumn>();
+        /// <summary>
+        /// SalesData
+        /// </summary>
+        public DbSet<SalesData> SalesData => Set<SalesData>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -71,6 +82,85 @@ namespace CorporateReporting.Web.Data
                     .IsRequired();
 
                 entity.HasIndex(x => x.Name).IsUnique();
+            });
+            modelBuilder.Entity<ReportableTable>(entity =>
+            {
+                entity.Property(x => x.SchemaName)
+                    .HasMaxLength(128)
+                    .IsRequired();
+
+                entity.Property(x => x.TableName)
+                    .HasMaxLength(128)
+                    .IsRequired();
+
+                entity.Property(x => x.DisplayName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.HasIndex(x => new { x.SchemaName, x.TableName })
+                    .IsUnique();
+
+                entity.HasOne(x => x.Department)
+                    .WithMany()
+                    .HasForeignKey(x => x.DepartmentId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<ReportableColumn>(entity =>
+            {
+                entity.Property(x => x.ColumnName)
+                    .HasMaxLength(128)
+                    .IsRequired();
+
+                entity.Property(x => x.DisplayName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(x => x.DataType)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.HasIndex(x => new { x.ReportableTableId, x.ColumnName })
+                    .IsUnique();
+
+                entity.HasOne(x => x.ReportableTable)
+                    .WithMany()
+                    .HasForeignKey(x => x.ReportableTableId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<SalesData>(entity =>
+            {
+                entity.Property(x => x.OrderNumber)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.Property(x => x.CustomerName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(x => x.ProductName)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(x => x.Category)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(x => x.UnitPrice)
+                    .HasPrecision(18, 2);
+
+                entity.Property(x => x.TotalAmount)
+                    .HasPrecision(18, 2);
+
+                entity.HasIndex(x => x.OrderNumber);
+
+                entity.HasIndex(x => x.SaleDate);
+
+                entity.HasOne(x => x.Department)
+                    .WithMany()
+                    .HasForeignKey(x => x.DepartmentId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

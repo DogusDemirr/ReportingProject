@@ -18,5 +18,9 @@
         /// Email address or password is invalid error message.
         /// </summary>
         public const string ERROR_MESSAGE_EMAIL_OR_PASSWORD_INVALID = "E-posta adresi veya şifre hatalı.";
+        /// <summary>
+        /// Schema name for the reportable tables in the database.
+        /// </summary>
+        public const string DEFAULT_SCHEMA_NAME = "dbo";
     }
 }
