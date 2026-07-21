@@ -1,0 +1,682 @@
+﻿@page
+@model CorporateReporting.Web.Pages.Dashboard.IndexModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Index";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | Corporate Reporting</title>
+
+    <style>
+        :root {
+            --navy: #0b1730;
+            --blue: #386fff;
+            --cyan: #20d6ca;
+            --surface: #ffffff;
+            --background: #f4f7fc;
+            --line: #e8edf6;
+            --text: #1c2a46;
+            --muted: #8290a8;
+            --green: #18b886;
+            --orange: #f59f42;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Inter, "Segoe UI", Arial, sans-serif;
+        }
+
+        .app-shell {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+        }
+
+        .sidebar {
+            position: fixed;
+            width: 260px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 26px 16px;
+            color: #d7e2fa;
+            background: linear-gradient(180deg, #08152d 0%, #102956 100%);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 11px 30px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 750;
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: linear-gradient(135deg, var(--cyan), var(--blue));
+        }
+
+        .nav-label {
+            margin: 8px 11px 10px;
+            color: #7690bc;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 5px;
+            padding: 12px;
+            border-radius: 10px;
+            color: #b9cae8;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s ease;
+        }
+
+            .nav-link:hover,
+            .nav-link.active {
+                color: #fff;
+                background: rgba(93, 137, 255, .18);
+            }
+
+            .nav-link.active {
+                box-shadow: inset 3px 0 0 var(--cyan);
+            }
+
+            .nav-link svg {
+                width: 19px;
+                height: 19px;
+            }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 16px 10px 0;
+            border-top: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #607efa, #23cfc8);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .profile-name {
+            max-width: 148px;
+            overflow: hidden;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 650;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .profile-role {
+            margin-top: 3px;
+            color: #89a1cb;
+            font-size: 11px;
+        }
+
+        .main {
+            grid-column: 2;
+            padding: 28px 36px 42px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 31px;
+        }
+
+        .date-label {
+            margin-bottom: 7px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 27px;
+            letter-spacing: -1px;
+        }
+
+        .new-report-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 17px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #386fff, #2858dd);
+            box-shadow: 0 10px 20px rgba(56, 111, 255, .22);
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .welcome-card {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 27px;
+            padding: 29px 31px;
+            border-radius: 17px;
+            background: linear-gradient(110deg, #142b5c, #254fa3);
+            color: #fff;
+        }
+
+            .welcome-card::after {
+                content: "";
+                position: absolute;
+                right: -60px;
+                top: -140px;
+                width: 330px;
+                height: 330px;
+                border: 45px solid rgba(255,255,255,.08);
+                border-radius: 50%;
+            }
+
+            .welcome-card > * {
+                position: relative;
+                z-index: 1;
+            }
+
+            .welcome-card h2 {
+                margin: 0 0 10px;
+                font-size: 23px;
+                letter-spacing: -.6px;
+            }
+
+            .welcome-card p {
+                max-width: 590px;
+                margin: 0;
+                color: #c4d5fc;
+                line-height: 1.6;
+                font-size: 14px;
+            }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 27px;
+        }
+
+        .metric-card {
+            padding: 19px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: var(--surface);
+            box-shadow: 0 3px 9px rgba(20, 43, 91, .025);
+        }
+
+        .metric-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .metric-icon {
+            width: 41px;
+            height: 41px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+        }
+
+            .metric-icon.blue {
+                background: #e8eeff;
+                color: #416ffc;
+            }
+
+            .metric-icon.cyan {
+                background: #e1fbfa;
+                color: #18bcb6;
+            }
+
+            .metric-icon.orange {
+                background: #fff1df;
+                color: #f39a34;
+            }
+
+            .metric-icon.green {
+                background: #e5f8f0;
+                color: #16ac7c;
+            }
+
+        .trend {
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: #e7f8f1;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 750;
+        }
+
+        .metric-value {
+            margin: 19px 0 5px;
+            font-size: 26px;
+            font-weight: 780;
+            letter-spacing: -.9px;
+        }
+
+        .metric-title {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.4fr) minmax(320px, .8fr);
+            gap: 20px;
+        }
+
+        .panel {
+            padding: 22px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: var(--surface);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .panel-title {
+            margin: 0;
+            font-size: 16px;
+            letter-spacing: -.3px;
+        }
+
+        .panel-action {
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .report-row {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 0;
+            border-bottom: 1px solid #eef1f6;
+        }
+
+            .report-row:last-child {
+                border-bottom: 0;
+                padding-bottom: 0;
+            }
+
+        .report-icon {
+            width: 39px;
+            height: 39px;
+            display: grid;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 10px;
+            background: #edf2ff;
+            color: #406fff;
+        }
+
+        .report-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 680;
+        }
+
+        .report-meta {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .report-status {
+            padding: 5px 8px;
+            border-radius: 6px;
+            background: #e7f8f1;
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+        .activity {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 20px;
+        }
+
+            .activity:last-child {
+                padding-bottom: 0;
+            }
+
+        .activity-dot {
+            width: 10px;
+            height: 10px;
+            flex: 0 0 auto;
+            margin-top: 4px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 0 5px #edf1ff;
+        }
+
+            .activity-dot.green {
+                background: var(--green);
+                box-shadow: 0 0 0 5px #e8f8f1;
+            }
+
+            .activity-dot.orange {
+                background: var(--orange);
+                box-shadow: 0 0 0 5px #fff3e5;
+            }
+
+        .activity-text {
+            color: #44516a;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+            .activity-text strong {
+                color: var(--text);
+            }
+
+        .activity-time {
+            margin-top: 3px;
+            color: #9ba6b9;
+            font-size: 11px;
+        }
+
+        @@media (max-width: 1100px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @@media (max-width: 760px) {
+            .app-shell {
+                display: block;
+            }
+
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                padding: 16px;
+            }
+
+                .sidebar nav,
+                .sidebar-bottom {
+                    display: none;
+                }
+
+            .brand {
+                padding: 0;
+            }
+
+            .main {
+                padding: 23px 18px 35px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                gap: 18px;
+                flex-direction: column;
+            }
+
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <svg viewBox="0 0 24 24" width="22" fill="none">
+                        <path d="M4 18.5V11M10 18.5V5.5M16 18.5V9M22 18.5V2.5"
+                              stroke="white" stroke-width="2.5"
+                              stroke-linecap="round" />
+                    </svg>
+                </div>
+                Corporate Reporting
+            </div>
+
+            <nav>
+                <p class="nav-label">Ana Menü</p>
+
+                <a class="nav-link active" href="/Dashboard">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="7" height="7" rx="1"
+                              stroke="currentColor" stroke-width="2" />
+                        <rect x="14" y="3" width="7" height="7" rx="1"
+                              stroke="currentColor" stroke-width="2" />
+                        <rect x="3" y="14" width="7" height="7" rx="1"
+                              stroke="currentColor" stroke-width="2" />
+                        <rect x="14" y="14" width="7" height="7" rx="1"
+                              stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    Dashboard
+                </a>
+
+                <a class="nav-link" href="/Reports/Create">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 20V4h16v16H4Z" stroke="currentColor"
+                              stroke-width="2" />
+                        <path d="M8 16v-4m4 4V8m4 8v-6" stroke="currentColor"
+                              stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Yeni Rapor
+                </a>
+
+                <a class="nav-link" href="/Reports/Templates">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M6 3h9l4 4v14H6V3Z" stroke="currentColor"
+                              stroke-width="2" stroke-linejoin="round" />
+                        <path d="M15 3v5h5M9 13h6M9 17h6"
+                              stroke="currentColor" stroke-width="2"
+                              stroke-linecap="round" />
+                    </svg>
+                    Rapor Şablonları
+                </a>
+
+                @if (Model.RoleName == "Admin")
+                {
+                    <p class="nav-label">Yönetim</p>
+
+                    <a class="nav-link" href="/Admin/Users">Kullanıcılar</a>
+                    <a class="nav-link" href="/Admin/Tables">Veri Kaynakları</a>
+                }
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="profile">
+                    <div class="avatar">@Model.FullName.Substring(0, 1).ToUpper()</div>
+                    <div>
+                        <div class="profile-name">@Model.FullName</div>
+                        <div class="profile-role">@Model.RoleName</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div>
+                    <div class="date-label">@DateTime.Now.ToString("dd.MM.yyyy")</div>
+                    <h1>Merhaba, @Model.FullName.Split(' ')[0] 👋</h1>
+                </div>
+
+                <a class="new-report-button" href="/Reports/Create">
+                    <span style="font-size: 19px; line-height: 0;">+</span>
+                    Yeni Rapor Oluştur
+                </a>
+            </header>
+
+            <section class="welcome-card">
+                <h2>Verileriniz karar vermeye hazır.</h2>
+                <p>
+                    Raporlarınızı oluşturun, verileri görselleştirin ve
+                    ekibinizle güvenle paylaşın.
+                </p>
+            </section>
+
+            <section class="metrics">
+                <article class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon blue">▦</div>
+                        <span class="trend">+12%</span>
+                    </div>
+                    <div class="metric-value">24</div>
+                    <div class="metric-title">Toplam rapor</div>
+                </article>
+
+                <article class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon cyan">◈</div>
+                        <span class="trend">+8%</span>
+                    </div>
+                    <div class="metric-value">8</div>
+                    <div class="metric-title">Bu ay oluşturulan</div>
+                </article>
+
+                <article class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon orange">◷</div>
+                        <span class="trend">+3%</span>
+                    </div>
+                    <div class="metric-value">5</div>
+                    <div class="metric-title">Kaydedilen şablon</div>
+                </article>
+
+                <article class="metric-card">
+                    <div class="metric-top">
+                        <div class="metric-icon green">↗</div>
+                        <span class="trend">Aktif</span>
+                    </div>
+                    <div class="metric-value">12</div>
+                    <div class="metric-title">Raporlanabilir kaynak</div>
+                </article>
+            </section>
+
+            <section class="content-grid">
+                <article class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Son oluşturulan raporlar</h2>
+                        <a class="panel-action" href="/Reports/Templates">Tümünü Gör</a>
+                    </div>
+
+                    <div class="report-row">
+                        <div class="report-icon">▤</div>
+                        <div>
+                            <div class="report-name">Aylık Satış Performansı</div>
+                            <div class="report-meta">Bugün, 10:42 · Excel</div>
+                        </div>
+                        <span class="report-status">Hazır</span>
+                    </div>
+
+                    <div class="report-row">
+                        <div class="report-icon">▤</div>
+                        <div>
+                            <div class="report-name">Departman Gider Analizi</div>
+                            <div class="report-meta">Dün, 16:20 · PDF</div>
+                        </div>
+                        <span class="report-status">Hazır</span>
+                    </div>
+
+                    <div class="report-row">
+                        <div class="report-icon">▤</div>
+                        <div>
+                            <div class="report-name">Personel İzin Özeti</div>
+                            <div class="report-meta">18 Temmuz · Görüntülendi</div>
+                        </div>
+                        <span class="report-status">Hazır</span>
+                    </div>
+                </article>
+
+                <article class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Son aktiviteler</h2>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-dot"></div>
+                        <div>
+                            <div class="activity-text">
+                                <strong>Aylık Satış Performansı</strong> raporunu oluşturdunuz.
+                            </div>
+                            <div class="activity-time">18 dakika önce</div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-dot green"></div>
+                        <div>
+                            <div class="activity-text">
+                                Bir rapor şablonu departmanla paylaşıldı.
+                            </div>
+                            <div class="activity-time">2 saat önce</div>
+                        </div>
+                    </div>
+
+                    <div class="activity">
+                        <div class="activity-dot orange"></div>
+                        <div>
+                            <div class="activity-text">
+                                <strong>Gider Analizi</strong> PDF olarak dışa aktarıldı.
+                            </div>
+                            <div class="activity-time">Dün, 16:20</div>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

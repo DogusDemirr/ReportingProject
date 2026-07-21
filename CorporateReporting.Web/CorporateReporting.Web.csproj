@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Dashboard\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Reports\" />
     <Folder Include="Services\" />
