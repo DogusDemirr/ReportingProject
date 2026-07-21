@@ -7,11 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Account\" />
     <Folder Include="Pages\Dashboard\" />
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Reports\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
