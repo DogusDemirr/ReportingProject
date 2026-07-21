@@ -8,6 +8,12 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Pages\Account\" />
+    <Folder Include="Pages\Dashboard\" />
+    <Folder Include="Pages\Admin\" />
+    <Folder Include="Pages\Shared\" />
+    <Folder Include="Pages\Reports\" />
+    <Folder Include="ViewModels\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
