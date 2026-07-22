@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\Admin\" />
-    <Folder Include="Pages\Reports\" />
   </ItemGroup>
 
   <ItemGroup>

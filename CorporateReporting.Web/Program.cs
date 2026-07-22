@@ -1,4 +1,5 @@
 using CorporateReporting.Web.Data;
+using CorporateReporting.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

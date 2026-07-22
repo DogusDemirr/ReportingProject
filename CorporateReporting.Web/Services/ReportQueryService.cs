@@ -226,7 +226,12 @@ namespace CorporateReporting.Web.Services
             var result = new ReportResultModel
             {
                 Columns = selectedColumns
-                    .Select(x => x.DisplayName)
+                    .Select(x => new ReportResultColumnModel
+                    {
+                        Name = x.ColumnName,
+                        DisplayName = x.DisplayName,
+                        DataType = x.DataType
+                    })
                     .ToList()
             };
 

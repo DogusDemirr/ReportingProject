@@ -46,7 +46,8 @@ namespace CorporateReporting.Web.Data
                     FullName = "Sistem Yöneticisi",
                     Email = "admin@corporatereporting.local",
                     RoleId = adminRole.Id,
-                    DepartmentId = itDepartment.Id
+                    DepartmentId = itDepartment.Id,
+                    IsActive = true
                 };
 
                 var passwordHasher = new PasswordHasher<ApplicationUser>();
