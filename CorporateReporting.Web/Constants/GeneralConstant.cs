@@ -22,5 +22,13 @@
         /// Schema name for the reportable tables in the database.
         /// </summary>
         public const string DEFAULT_SCHEMA_NAME = "dbo";
+        /// <summary>
+        /// Report request model data source required error message.
+        /// </summary>
+        public const string REPORT_REQUEST_MODEL_DATASOURCE_REQUIRED = "Lütfen bir veri kaynağı seçin";
+        /// <summary>
+        /// Report request model columns required error message.
+        /// </summary>
+        public const string REPORT_REQUEST_MODEL_COLUMNS_REQUIRED = "En az bir kolon seçmelisiniz";
     }
 }
