@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Pages\Admin\" />
     <Folder Include="Pages\Reports\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
