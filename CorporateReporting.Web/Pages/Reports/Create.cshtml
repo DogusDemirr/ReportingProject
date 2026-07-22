@@ -483,6 +483,81 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .template-save {
+            display: flex;
+            align-items: end;
+            gap: 13px;
+            margin-top: 22px;
+            padding: 18px 20px;
+            border: 1px solid #dce6ff;
+            border-radius: 14px;
+            background: linear-gradient(100deg, #f7f9ff, #eef4ff);
+        }
+
+        .template-info {
+            flex: 1;
+        }
+
+            .template-info h3 {
+                margin: 0 0 4px;
+                color: var(--navy);
+                font-size: 14px;
+            }
+
+            .template-info p {
+                margin: 0;
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+        .template-name {
+            width: 240px;
+        }
+
+        .save-template-button {
+            height: 42px;
+            padding: 0 15px;
+            border: 0;
+            border-radius: 9px;
+            background: #173b82;
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .shared-check {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 9px;
+            color: #53617b;
+            font-size: 12px;
+        }
+
+        .success-message {
+            margin: 0 0 20px;
+            padding: 13px 16px;
+            border: 1px solid #c8efdf;
+            border-radius: 11px;
+            background: #edfcf5;
+            color: #16845f;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        @@media (max-width: 760px) {
+            .template-save {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .template-name {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -509,6 +584,12 @@
                 <p>Veri kaynağını, kolonları ve filtreleri seçerek raporunuzu hazırlayın.</p>
             </div>
         </div>
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="success-message">
+                ✓ @successMessage
+            </div>
+        }
 
         <section class="source-card">
             <h2 class="section-title">1. Veri kaynağını seçin</h2>
@@ -683,6 +764,29 @@
                         </button>
                     </section>
                 </div>
+                <section class="template-save">
+                    <div class="template-info">
+                        <h3>Bu raporu şablon olarak kaydedin</h3>
+                        <p>Kolon, filtre ve sıralama seçimlerinizi daha sonra tek tıkla kullanın.</p>
+                    </div>
+
+                    <div class="template-name">
+                        <input asp-for="TemplateInput.Name"
+                               class="text-field"
+                               placeholder="Örn. Aylık satış özeti" />
+
+                        <label class="shared-check">
+                            <input asp-for="TemplateInput.IsShared" />
+                            Departmanla paylaş
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                            asp-page-handler="SaveTemplate"
+                            class="save-template-button">
+                        Şablonu Kaydet
+                    </button>
+                </section>
             </form>
         }
         else if (selectedTableId == 0)

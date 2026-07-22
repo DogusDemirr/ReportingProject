@@ -34,6 +34,10 @@ namespace CorporateReporting.Web.Data
         /// SalesData
         /// </summary>
         public DbSet<SalesData> SalesData => Set<SalesData>();
+        /// <summary>
+        /// ReportTemplates
+        /// </summary>
+        public DbSet<ReportTemplate> ReportTemplates => Set<ReportTemplate>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -161,6 +165,29 @@ namespace CorporateReporting.Web.Data
                     .WithMany()
                     .HasForeignKey(x => x.DepartmentId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<ReportTemplate>(entity =>
+            {
+                entity.Property(x => x.Name)
+                    .HasMaxLength(150)
+                    .IsRequired();
+
+                entity.Property(x => x.ConfigurationJson)
+                    .IsRequired();
+
+                entity.HasOne(x => x.User)
+                    .WithMany()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.ReportableTable)
+                    .WithMany()
+                    .HasForeignKey(x => x.ReportableTableId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(x => new { x.UserId, x.Name })
+                    .IsUnique();
             });
         }
     }
