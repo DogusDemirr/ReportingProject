@@ -558,6 +558,36 @@
                 width: 100%;
             }
         }
+
+        .result-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .excel-button {
+            padding: 8px 11px;
+            border: 0;
+            border-radius: 8px;
+            background: #168b66;
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .pdf-button {
+            padding: 8px 11px;
+            border: 0;
+            border-radius: 8px;
+            background: #d95067;
+            color: #fff;
+            cursor: pointer;
+            font: inherit;
+            font-size: 11px;
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
@@ -851,7 +881,24 @@
             <section class="result-panel">
                 <div class="result-header">
                     <h2>Rapor sonucu</h2>
-                    <span class="row-count">@Model.Result.TotalCount kayıt bulundu</span>
+
+                    <div class="result-actions">
+                        <span class="row-count">@Model.Result.TotalCount kayıt bulundu</span>
+
+                        <button type="submit"
+                                form="reportForm"
+                                asp-page-handler="ExportExcel"
+                                class="excel-button">
+                            Excel’e Aktar
+                        </button>
+
+                        <button type="submit"
+                                form="reportForm"
+                                asp-page-handler="ExportPdf"
+                                class="pdf-button">
+                            PDF’e Aktar
+                        </button>
+                    </div>
                 </div>
 
                 <div class="table-wrap">
@@ -898,90 +945,90 @@
         x.DataType == "int" || x.DataType == "decimal"))
     {
         <script>
-            const reportColumns = @Html.Raw(
-                            JsonSerializer.Serialize(Model.Result.Columns));
+                const reportColumns = @Html.Raw(
+                                                            JsonSerializer.Serialize(Model.Result.Columns));
 
         const reportRows = @Html.Raw(
-                        JsonSerializer.Serialize(Model.Result.Rows));
+                                                JsonSerializer.Serialize(Model.Result.Rows));
 
         google.charts.load("current", { packages: ["corechart"] });
         google.charts.setOnLoadCallback(drawReportChart);
 
-            document.getElementById("chartType")
-                .addEventListener("change", drawReportChart);
+                document.getElementById("chartType")
+                    .addEventListener("change", drawReportChart);
 
-            document.getElementById("chartLabelColumn")
-                .addEventListener("change", drawReportChart);
+                document.getElementById("chartLabelColumn")
+                    .addEventListener("change", drawReportChart);
 
-            document.getElementById("chartValueColumn")
-                .addEventListener("change", drawReportChart);
+                document.getElementById("chartValueColumn")
+                    .addEventListener("change", drawReportChart);
 
-            function drawReportChart() {
-                const chartType = document.getElementById("chartType").value;
-                const labelColumn = document.getElementById("chartLabelColumn").value;
-                const valueColumn = document.getElementById("chartValueColumn").value;
+                function drawReportChart() {
+                    const chartType = document.getElementById("chartType").value;
+                    const labelColumn = document.getElementById("chartLabelColumn").value;
+                    const valueColumn = document.getElementById("chartValueColumn").value;
 
-                const labelName = reportColumns
-                    .find(x => x.Name === labelColumn).DisplayName;
+                    const labelName = reportColumns
+                        .find(x => x.Name === labelColumn).DisplayName;
 
-                const valueName = reportColumns
-                    .find(x => x.Name === valueColumn).DisplayName;
+                    const valueName = reportColumns
+                        .find(x => x.Name === valueColumn).DisplayName;
 
-                const groupedData = new Map();
+                    const groupedData = new Map();
 
-                reportRows.forEach(row => {
-                    const label = String(row[labelColumn] ?? "Belirtilmemiş");
-                    const value = Number(row[valueColumn]);
+                    reportRows.forEach(row => {
+                        const label = String(row[labelColumn] ?? "Belirtilmemiş");
+                        const value = Number(row[valueColumn]);
 
-                    if (!Number.isFinite(value)) {
-                        return;
-                    }
+                        if (!Number.isFinite(value)) {
+                            return;
+                        }
 
-                    groupedData.set(
-                        label,
-                        (groupedData.get(label) ?? 0) + value
+                        groupedData.set(
+                            label,
+                            (groupedData.get(label) ?? 0) + value
+                        );
+                    });
+
+                    const data = new google.visualization.DataTable();
+
+                    data.addColumn("string", labelName);
+                    data.addColumn("number", valueName);
+
+                    data.addRows(
+                        Array.from(groupedData.entries())
                     );
-                });
 
-                const data = new google.visualization.DataTable();
+                    const options = {
+                        backgroundColor: "transparent",
+                        colors: ["#386fff", "#20d6ca", "#f59f42", "#18ad7e"],
+                        fontName: "Segoe UI",
+                        legend: chartType === "PieChart"
+                            ? { position: "right" }
+                            : { position: "none" },
+                        chartArea: {
+                            left: chartType === "PieChart" ? 20 : 65,
+                            top: 25,
+                            width: "84%",
+                            height: "76%"
+                        },
+                        hAxis: {
+                            textStyle: { color: "#71809b", fontSize: 11 }
+                        },
+                        vAxis: {
+                            minValue: 0,
+                            textStyle: { color: "#71809b", fontSize: 11 },
+                            gridlines: { color: "#edf1f7" }
+                        },
+                        pieHole: chartType === "PieChart" ? 0.48 : 0
+                    };
 
-                data.addColumn("string", labelName);
-                data.addColumn("number", valueName);
+                    const chart = new google.visualization[chartType](
+                        document.getElementById("reportChart")
+                    );
 
-                data.addRows(
-                    Array.from(groupedData.entries())
-                );
-
-                const options = {
-                    backgroundColor: "transparent",
-                    colors: ["#386fff", "#20d6ca", "#f59f42", "#18ad7e"],
-                    fontName: "Segoe UI",
-                    legend: chartType === "PieChart"
-                        ? { position: "right" }
-                        : { position: "none" },
-                    chartArea: {
-                        left: chartType === "PieChart" ? 20 : 65,
-                        top: 25,
-                        width: "84%",
-                        height: "76%"
-                    },
-                    hAxis: {
-                        textStyle: { color: "#71809b", fontSize: 11 }
-                    },
-                    vAxis: {
-                        minValue: 0,
-                        textStyle: { color: "#71809b", fontSize: 11 },
-                        gridlines: { color: "#edf1f7" }
-                    },
-                    pieHole: chartType === "PieChart" ? 0.48 : 0
-                };
-
-                const chart = new google.visualization[chartType](
-                    document.getElementById("reportChart")
-                );
-
-                chart.draw(data, options);
-            }
+                    chart.draw(data, options);
+                }
         </script>
         }
     <script>

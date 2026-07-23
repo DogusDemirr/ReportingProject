@@ -14,10 +14,14 @@ namespace CorporateReporting.Web.Pages.Reports
     {
         private readonly ApplicationDbContext _context;
         private readonly IReportQueryService _reportQueryService;
-        public CreateModel(ApplicationDbContext context, IReportQueryService reportQueryService)
+        private readonly IExcelExportService _excelExportService;
+        private readonly IPdfExportService _pdfExportService;
+        public CreateModel(ApplicationDbContext context, IReportQueryService reportQueryService, IExcelExportService excelExportService, IPdfExportService pdfExportService)
         {
             _context = context;
             _reportQueryService = reportQueryService;
+            _excelExportService = excelExportService;
+            _pdfExportService = pdfExportService;
         }
         /// <summary>
         /// TableId
@@ -248,6 +252,103 @@ namespace CorporateReporting.Web.Pages.Reports
             {
                 tableId = Request.ReportableTableId
             });
+        }
+
+        public async Task<IActionResult> OnPostExportExcelAsync(
+    CancellationToken cancellationToken)
+        {
+            await LoadFormDataAsync(
+                Request.ReportableTableId,
+                cancellationToken);
+
+            if (Request.ReportableTableId <= 0 ||
+                Request.SelectedColumnIds.Count == 0)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Excel indirmek için önce geçerli bir rapor oluşturmalısınız.");
+
+                return Page();
+            }
+
+            var userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var departmentId = await _context.Users
+                .Where(x => x.Id == userId)
+                .Select(x => x.DepartmentId)
+                .SingleAsync(cancellationToken);
+
+            var roleName = User.FindFirstValue(ClaimTypes.Role) ?? "Employee";
+
+            var report = await _reportQueryService.ExecuteAsync(
+                Request,
+                userId,
+                departmentId,
+                roleName,
+                cancellationToken);
+
+            var fileContent = _excelExportService.CreateReportFile(
+                report,
+                "Kurumsal Raporlama Sistemi");
+
+            var fileName =
+                $"Rapor_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+            return File(
+                fileContent,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName);
+        }
+
+        public async Task<IActionResult> OnPostExportPdfAsync(
+    CancellationToken cancellationToken)
+        {
+            await LoadFormDataAsync(
+                Request.ReportableTableId,
+                cancellationToken);
+
+            if (Request.ReportableTableId <= 0 ||
+                Request.SelectedColumnIds.Count == 0)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "PDF indirmek için önce geçerli bir rapor oluşturmalısınız.");
+
+                return Page();
+            }
+
+            var userId = int.Parse(
+                User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            var departmentId = await _context.Users
+                .Where(x => x.Id == userId)
+                .Select(x => x.DepartmentId)
+                .SingleAsync(cancellationToken);
+
+            var roleName = User.FindFirstValue(ClaimTypes.Role) ?? "Employee";
+
+            var report = await _reportQueryService.ExecuteAsync(
+                Request,
+                userId,
+                departmentId,
+                roleName,
+                cancellationToken);
+
+            var createdBy = User.Identity?.Name ?? "Kullanıcı";
+
+            var fileContent = _pdfExportService.CreateReportFile(
+                report,
+                "Kurumsal Raporlama Sistemi",
+                createdBy);
+
+            var fileName =
+                $"Rapor_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
+
+            return File(
+                fileContent,
+                "application/pdf",
+                fileName);
         }
         private async Task LoadFormDataAsync(
             int? selectedTableId,

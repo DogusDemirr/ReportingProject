@@ -2,9 +2,10 @@ using CorporateReporting.Web.Data;
 using CorporateReporting.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
-
+QuestPDF.Settings.License = LicenseType.Community;
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -20,6 +21,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
+builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
+builder.Services.AddScoped<IPdfExportService, PdfExportService>();
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
