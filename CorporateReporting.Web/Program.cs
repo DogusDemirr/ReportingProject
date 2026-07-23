@@ -23,6 +23,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IReportQueryService, ReportQueryService>();
 builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
 builder.Services.AddScoped<IPdfExportService, PdfExportService>();
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddRazorPages();
 

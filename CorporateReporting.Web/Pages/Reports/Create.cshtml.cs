@@ -16,12 +16,14 @@ namespace CorporateReporting.Web.Pages.Reports
         private readonly IReportQueryService _reportQueryService;
         private readonly IExcelExportService _excelExportService;
         private readonly IPdfExportService _pdfExportService;
-        public CreateModel(ApplicationDbContext context, IReportQueryService reportQueryService, IExcelExportService excelExportService, IPdfExportService pdfExportService)
+        private readonly IAuditLogService _auditLogService;
+        public CreateModel(ApplicationDbContext context, IReportQueryService reportQueryService, IExcelExportService excelExportService, IPdfExportService pdfExportService, IAuditLogService auditLogService)
         {
             _context = context;
             _reportQueryService = reportQueryService;
             _excelExportService = excelExportService;
             _pdfExportService = pdfExportService;
+            _auditLogService = auditLogService;
         }
         /// <summary>
         /// TableId
@@ -159,6 +161,12 @@ namespace CorporateReporting.Web.Pages.Reports
                     departmentId,
                     roleName,
                     cancellationToken);
+                await _auditLogService.LogAsync(
+                      userId,
+                      "ReportExecuted",
+                      $"VeriKaynağıId: {Request.ReportableTableId}; " +
+                      $"KayıtSayısı: {Result.TotalCount}",
+    cancellationToken);
             }
             catch (Exception exception)
             {
@@ -245,6 +253,14 @@ namespace CorporateReporting.Web.Pages.Reports
 
             await _context.SaveChangesAsync(cancellationToken);
 
+            await _auditLogService.LogAsync(
+                  userId,
+                  "ReportTemplateCreated",
+                  $"Şablon: {template.Name}; " +
+                  $"VeriKaynağıId: {template.ReportableTableId}; " +
+                  $"Paylaşımlı: {template.IsShared}",
+                  cancellationToken);
+
             TempData["SuccessMessage"] =
                 $"'{template.Name}' şablonu başarıyla kaydedildi.";
 
@@ -291,6 +307,13 @@ namespace CorporateReporting.Web.Pages.Reports
             var fileContent = _excelExportService.CreateReportFile(
                 report,
                 "Kurumsal Raporlama Sistemi");
+
+            await _auditLogService.LogAsync(
+                    userId,
+                    "ReportExportedExcel",
+                    $"VeriKaynağıId: {Request.ReportableTableId}; " +
+                    $"KayıtSayısı: {report.TotalCount}",
+                    cancellationToken);
 
             var fileName =
                 $"Rapor_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
@@ -341,6 +364,13 @@ namespace CorporateReporting.Web.Pages.Reports
                 report,
                 "Kurumsal Raporlama Sistemi",
                 createdBy);
+
+            await _auditLogService.LogAsync(
+                 userId,
+                 "ReportExportedPdf",
+                 $"VeriKaynağıId: {Request.ReportableTableId}; " +
+                 $"KayıtSayısı: {report.TotalCount}",
+                cancellationToken);
 
             var fileName =
                 $"Rapor_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";

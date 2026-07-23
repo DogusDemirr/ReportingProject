@@ -38,6 +38,10 @@ namespace CorporateReporting.Web.Data
         /// ReportTemplates
         /// </summary>
         public DbSet<ReportTemplate> ReportTemplates => Set<ReportTemplate>();
+        /// <summary>
+        /// AuditLogs DbSet for managing audit logs in the database.
+        /// </summary>
+        public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -188,6 +192,26 @@ namespace CorporateReporting.Web.Data
 
                 entity.HasIndex(x => new { x.UserId, x.Name })
                     .IsUnique();
+            });
+
+            modelBuilder.Entity<AuditLog>(entity =>
+            {
+                entity.Property(x => x.Action)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(x => x.Details)
+                    .HasMaxLength(2000);
+
+                entity.Property(x => x.IpAddress)
+                    .HasMaxLength(64);
+
+                entity.HasIndex(x => x.CreatedAt);
+
+                entity.HasOne(x => x.User)
+                    .WithMany()
+                    .HasForeignKey(x => x.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
