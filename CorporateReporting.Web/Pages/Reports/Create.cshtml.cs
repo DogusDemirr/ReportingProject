@@ -45,9 +45,58 @@ namespace CorporateReporting.Web.Pages.Reports
         /// TemplateInput for saving the report template
         /// </summary>
         public SaveReportTemplateInputModel TemplateInput { get; set; } = new();
+        /// <summary>
+        /// TemplateId for loading an existing report template
+        /// </summary>
+        public int? TemplateId { get; set; }
 
-        public async Task OnGetAsync(CancellationToken cancellationToken)
+        public async Task OnGetAsync(
+    int? templateId,
+    CancellationToken cancellationToken)
         {
+            if (templateId is not null)
+            {
+                var userId = int.Parse(
+                    User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                var departmentId = await _context.Users
+                    .Where(x => x.Id == userId)
+                    .Select(x => x.DepartmentId)
+                    .SingleAsync(cancellationToken);
+
+                var template = await _context.ReportTemplates
+                    .Include(x => x.User)
+                    .SingleOrDefaultAsync(
+                        x => x.Id == templateId.Value,
+                        cancellationToken);
+
+                var canAccessTemplate =
+                    template is not null &&
+                    (
+                        User.IsInRole("Admin") ||
+                        template.UserId == userId ||
+                        (template.IsShared &&
+                         template.User.DepartmentId == departmentId)
+                    );
+
+                if (canAccessTemplate)
+                {
+                    var savedRequest =
+                        JsonSerializer.Deserialize<ReportRequestModel>(
+                            template!.ConfigurationJson);
+
+                    Request = savedRequest ?? new ReportRequestModel();
+
+                    // Kaynağı JSON’dan değil, şablon tablosundaki ilişkiden al.
+                    Request.ReportableTableId = template.ReportableTableId;
+                    TableId = template.ReportableTableId;
+
+                    await LoadFormDataAsync(TableId, cancellationToken);
+
+                    return;
+                }
+            }
+
             await LoadFormDataAsync(TableId, cancellationToken);
 
             if (TableId is not null)
