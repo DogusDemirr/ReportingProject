@@ -2,7 +2,7 @@
 @model CorporateReporting.Web.Pages.Dashboard.IndexModel
 @{
     Layout = null;
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Dashboard";
 }
 
 <!DOCTYPE html>
@@ -108,6 +108,7 @@
             .nav-link svg {
                 width: 19px;
                 height: 19px;
+                flex: 0 0 auto;
             }
 
         .sidebar-bottom {
@@ -205,7 +206,7 @@
                 top: -140px;
                 width: 330px;
                 height: 330px;
-                border: 45px solid rgba(255,255,255,.08);
+                border: 45px solid rgba(255, 255, 255, .08);
                 border-radius: 50%;
             }
 
@@ -340,8 +341,8 @@
         }
 
             .report-row:last-child {
-                border-bottom: 0;
                 padding-bottom: 0;
+                border-bottom: 0;
             }
 
         .report-icon {
@@ -481,7 +482,8 @@
                 <div class="brand-mark">
                     <svg viewBox="0 0 24 24" width="22" fill="none">
                         <path d="M4 18.5V11M10 18.5V5.5M16 18.5V9M22 18.5V2.5"
-                              stroke="white" stroke-width="2.5"
+                              stroke="white"
+                              stroke-width="2.5"
                               stroke-linecap="round" />
                     </svg>
                 </div>
@@ -491,7 +493,7 @@
             <nav>
                 <p class="nav-label">Ana Menü</p>
 
-                <a class="nav-link active" href="/Dashboard">
+                <a class="nav-link active" asp-page="/Dashboard/Index">
                     <svg viewBox="0 0 24 24" fill="none">
                         <rect x="3" y="3" width="7" height="7" rx="1"
                               stroke="currentColor" stroke-width="2" />
@@ -505,22 +507,27 @@
                     Dashboard
                 </a>
 
-                <a class="nav-link" href="/Reports/Create">
+                <a class="nav-link" asp-page="/Reports/Create">
                     <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M4 20V4h16v16H4Z" stroke="currentColor"
-                              stroke-width="2" />
-                        <path d="M8 16v-4m4 4V8m4 8v-6" stroke="currentColor"
-                              stroke-width="2" stroke-linecap="round" />
+                        <path d="M4 20V4h16v16H4Z"
+                              stroke="currentColor" stroke-width="2" />
+                        <path d="M8 16v-4m4 4V8m4 8v-6"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round" />
                     </svg>
                     Yeni Rapor
                 </a>
 
-                <a class="nav-link" href="/Reports/Templates">
+                <a class="nav-link" asp-page="/Reports/Templates">
                     <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M6 3h9l4 4v14H6V3Z" stroke="currentColor"
-                              stroke-width="2" stroke-linejoin="round" />
+                        <path d="M6 3h9l4 4v14H6V3Z"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linejoin="round" />
                         <path d="M15 3v5h5M9 13h6M9 17h6"
-                              stroke="currentColor" stroke-width="2"
+                              stroke="currentColor"
+                              stroke-width="2"
                               stroke-linecap="round" />
                     </svg>
                     Rapor Şablonları
@@ -530,8 +537,50 @@
                 {
                     <p class="nav-label">Yönetim</p>
 
-                    <a class="nav-link" href="/Admin/Users">Kullanıcılar</a>
-                    <a class="nav-link" href="/Admin/Tables">Veri Kaynakları</a>
+                    <a class="nav-link" href="/Admin/Users">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round" />
+                            <circle cx="9.5" cy="7" r="4"
+                                    stroke="currentColor"
+                                    stroke-width="2" />
+                            <path d="M17 11a4 4 0 0 1 0-8M21 20v-1.5a4 4 0 0 0-3-3.87"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round" />
+                        </svg>
+                        Kullanıcılar
+                    </a>
+
+                    <a class="nav-link" href="/Admin/Tables">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <ellipse cx="12" cy="5" rx="8" ry="3"
+                                     stroke="currentColor"
+                                     stroke-width="2" />
+                            <path d="M4 5v7c0 1.66 3.58 3 8 3s8-1.34 8-3V5"
+                                  stroke="currentColor"
+                                  stroke-width="2" />
+                            <path d="M4 12v7c0 1.66 3.58 3 8 3s8-1.34 8-3v-7"
+                                  stroke="currentColor"
+                                  stroke-width="2" />
+                        </svg>
+                        Veri Kaynakları
+                    </a>
+
+                    <a class="nav-link" asp-page="/Admin/AuditLog">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M6 3h12v18H6z"
+                                  stroke="currentColor"
+                                  stroke-width="2" />
+                            <path d="M9 8h6M9 12h6M9 16h4"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round" />
+                        </svg>
+                        İşlem Kayıtları
+                    </a>
                 }
             </nav>
 
@@ -553,7 +602,7 @@
                     <h1>Merhaba, @Model.FullName.Split(' ')[0] 👋</h1>
                 </div>
 
-                <a class="new-report-button" href="/Reports/Create">
+                <a class="new-report-button" asp-page="/Reports/Create">
                     <span style="font-size: 19px; line-height: 0;">+</span>
                     Yeni Rapor Oluştur
                 </a>
@@ -561,10 +610,7 @@
 
             <section class="welcome-card">
                 <h2>Verileriniz karar vermeye hazır.</h2>
-                <p>
-                    Raporlarınızı oluşturun, verileri görselleştirin ve
-                    ekibinizle güvenle paylaşın.
-                </p>
+                <p>Raporlarınızı oluşturun, verileri görselleştirin ve ekibinizle güvenle paylaşın.</p>
             </section>
 
             <section class="metrics">
@@ -579,7 +625,7 @@
 
                 <article class="metric-card">
                     <div class="metric-top">
-                        <div class="metric-icon cyan">◈</div>
+                        <div class="metric-icon cyan">◇</div>
                         <span class="trend">+8%</span>
                     </div>
                     <div class="metric-value">8</div>
@@ -609,7 +655,7 @@
                 <article class="panel">
                     <div class="panel-header">
                         <h2 class="panel-title">Son oluşturulan raporlar</h2>
-                        <a class="panel-action" href="/Reports/Templates">Tümünü Gör</a>
+                        <a class="panel-action" asp-page="/Reports/Templates">Tümünü Gör</a>
                     </div>
 
                     <div class="report-row">

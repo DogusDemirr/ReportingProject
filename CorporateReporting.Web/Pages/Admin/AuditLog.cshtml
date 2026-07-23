@@ -1,0 +1,333 @@
+﻿@page
+@model CorporateReporting.Web.Pages.Admin.AuditLogModel
+@{
+    Layout = null;
+    ViewData["Title"] = "İşlem Kayıtları";
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>İşlem Kayıtları | Corporate Reporting</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f7fd;
+            color: #14264b;
+        }
+
+        .topbar {
+            height: 76px;
+            background: #fff;
+            border-bottom: 1px solid #e6ebf5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 42px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #10234a;
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 39px;
+            height: 39px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-size: 20px;
+            background: linear-gradient(135deg, #1bc9df, #4169ed);
+            box-shadow: 0 8px 18px rgba(50, 101, 230, .25);
+        }
+
+        .back-link {
+            color: #59709c;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .back-link:hover { color: #3167ef; }
+
+        .container {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 48px 30px;
+        }
+
+        .eyebrow {
+            margin: 0 0 9px;
+            color: #3e70ff;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .55px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 30px;
+            color: #10234a;
+        }
+
+        .subtitle {
+            margin: 10px 0 30px;
+            color: #8495b6;
+            font-size: 15px;
+        }
+
+        .toolbar {
+            background: #fff;
+            border: 1px solid #e6ebf5;
+            border-radius: 18px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 28px rgba(25, 56, 118, .04);
+        }
+
+        .record-count {
+            color: #64789e;
+            font-size: 14px;
+        }
+
+        .record-count strong {
+            color: #1e4fe0;
+            font-size: 20px;
+        }
+
+        .filter-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            min-width: 220px;
+            padding: 11px 14px;
+            border: 1px solid #dce4f3;
+            border-radius: 10px;
+            outline: none;
+            color: #24375c;
+            background: #fff;
+        }
+
+        .clear-link {
+            color: #56709f;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .clear-link:hover { color: #e44f67; }
+
+        .table-card {
+            background: #fff;
+            border: 1px solid #e6ebf5;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 28px rgba(25, 56, 118, .04);
+        }
+
+        .table-wrap { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 950px;
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: .45px;
+            color: #7184aa;
+            background: #f8faff;
+            border-bottom: 1px solid #e8edf6;
+        }
+
+        td {
+            padding: 17px 20px;
+            color: #33496f;
+            font-size: 14px;
+            border-bottom: 1px solid #eef2f8;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: 0; }
+
+        tr:hover td { background: #fbfcff; }
+
+        .user-name {
+            font-weight: 750;
+            color: #1b315b;
+        }
+
+        .user-email {
+            display: block;
+            margin-top: 4px;
+            color: #8a9aba;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 10px;
+            border-radius: 999px;
+            background: #edf3ff;
+            color: #3565dd;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .detail {
+            max-width: 380px;
+            color: #63789f;
+            line-height: 1.5;
+        }
+
+        .date {
+            white-space: nowrap;
+            color: #4d638c;
+            font-weight: 650;
+        }
+
+        .ip {
+            color: #7487aa;
+            font-family: Consolas, monospace;
+            font-size: 12px;
+        }
+
+        .empty {
+            padding: 76px 25px;
+            text-align: center;
+            color: #8293b2;
+        }
+
+        .empty-icon {
+            width: 52px;
+            height: 52px;
+            margin: 0 auto 14px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            color: #4975f1;
+            background: #edf3ff;
+            font-size: 23px;
+        }
+
+        .empty h3 {
+            margin: 0 0 8px;
+            color: #27446f;
+            font-size: 17px;
+        }
+
+        .empty p { margin: 0; }
+
+        @@media (max-width: 700px) {
+            .topbar { padding: 0 18px; }
+            .container { padding: 32px 16px; }
+            .toolbar { align-items: flex-start; flex-direction: column; }
+            .filter-form, select { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" asp-page="/Dashboard/Index">
+            <span class="brand-icon">▥</span>
+            <span>Corporate Reporting</span>
+        </a>
+
+        <a class="back-link" asp-page="/Dashboard/Index">← Dashboard’a dön</a>
+    </header>
+
+    <main class="container">
+        <p class="eyebrow">YÖNETİM PANELİ / DENETİM KAYITLARI</p>
+        <h1>İşlem kayıtları</h1>
+        <p class="subtitle">Sistemde gerçekleştirilen son 200 kritik işlemi buradan izleyebilirsiniz.</p>
+
+        <section class="toolbar">
+            <div class="record-count">
+                Toplam görüntülenen kayıt: <strong>@Model.Logs.Count</strong>
+            </div>
+
+            <form method="get" class="filter-form">
+                <select asp-for="ActionFilter" onchange="this.form.submit()">
+                    <option value="">Tüm işlemler</option>
+                    <option value="ReportExecuted">Rapor çalıştırıldı</option>
+                    <option value="ReportExportedExcel">Excel dışa aktarıldı</option>
+                    <option value="ReportExportedPdf">PDF dışa aktarıldı</option>
+                    <option value="ReportTemplateCreated">Şablon oluşturuldu</option>
+                </select>
+
+                @if (!string.IsNullOrWhiteSpace(Model.ActionFilter))
+                {
+                    <a class="clear-link" asp-page="/Admin/AuditLog">Filtreyi temizle</a>
+                }
+            </form>
+        </section>
+
+        <section class="table-card">
+            @if (Model.Logs.Any())
+            {
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>KULLANICI</th>
+                                <th>İŞLEM</th>
+                                <th>DETAY</th>
+                                <th>TARİH</th>
+                                <th>IP ADRESİ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var log in Model.Logs)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="user-name">@log.User.FullName</span>
+                                        <span class="user-email">@log.User.Email</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge">@log.Action</span>
+                                    </td>
+                                    <td class="detail">@(string.IsNullOrWhiteSpace(log.Details) ? "-" : log.Details)</td>
+                                    <td class="date">@log.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td class="ip">@(log.IpAddress ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty">
+                    <div class="empty-icon">◫</div>
+                    <h3>Henüz kayıt bulunmuyor</h3>
+                    <p>Rapor çalıştırma, dışa aktarma ve şablon kaydetme işlemleri burada listelenecek.</p>
+                </div>
+            }
+        </section>
+    </main>
+</body>
+</html>
